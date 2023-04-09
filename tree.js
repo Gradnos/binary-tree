@@ -9,16 +9,16 @@ class Node{
 class Tree{
 
     constructor(arr){
+        this.root = new Node();
         if(!arr) return;
-        console.log(arr);
         this.root = this.buildTree(arr, true);
     }
 
 
-    #buildTree(arr, isFirst){
-        if(arr.length < 2) return arr[0];
+    buildTree(arr, isFirst){
+        if(arr.length === 0) return null;
+        if(arr.length === 1) return new Node(arr[0]);
         if(isFirst) arr = [...new Set(arr)].sort((a,b) => a - b);
-        console.log(arr);
         let midId = Math.floor(arr.length/2);
         
         let node = new Node(arr[midId]);
@@ -29,7 +29,7 @@ class Tree{
     }
 
     insert(value){
-        if(!this.root) return this.root = new Node(value);
+        if(!this.root.value) return this.root = new Node(value);
         
         let current = this.root;
 
@@ -41,12 +41,74 @@ class Tree{
             } else if(value < current.value){
                 if(current.left === null) return current.left = new Node(value);
                 current = current.left;
-            } if(current.value === value) return;
+            } if(current.value === value) return null;
 
         }
+    }
 
 
+    delete(value){
+        if(!this.root.value) return null;
+        if(this.root.value === value) return this.root.value = null;
+        let parent = this.root;
+        let node;
+        while(true){
+            if(value > parent.value && parent.right){
+                if(parent.right.value === value){
+                    node = parent.right;
+                    break;
+                } else parent = parent.right;
+            } else if(value < parent.value && parent.left){
+                if(parent.left.value === value){
+                    node = parent.left;
+                    break;
+                } else parent = parent.left;
+            }
+        }
 
+        if(!node) return null;
+
+        if(!node.right && !node.left){
+            if(parent.left.value === value){
+                parent.left = null;
+                return value;
+            } else if(parent.right.value === value){
+                parent.right = null;
+                return value;
+            }
+        }
+
+        if(node.right && !node.left){
+            node.value = node.right.value;
+            node.right = null;
+            return value;
+        }
+
+        if(node.left && !node.right){
+            node.value = node.left.value;
+            node.left = null;
+            return value;
+        }
+
+        if(node.left && node.right){
+            let afterP = node.right;
+            let after;
+            if(!afterP.left){
+                node.value = node.right.value;
+                node.right = null;
+                return value;
+            }
+
+            while(afterP.left && afterP.left.left){
+                afterP = afterP.left;
+            }
+            after = afterP.left;
+            node.value = after.value;
+            afterP.left = null;
+            return value;
+        }
+
+        return null;
     }
 
 
@@ -57,5 +119,26 @@ class Tree{
 
 }
 
+
+const prettyPrint = (node, prefix = '', isLeft = true) => {
+    if (node === null) {
+       return;
+    }
+    if (node.right !== null) {
+      prettyPrint(node.right, `${prefix}${isLeft ? '│   ' : '    '}`, false);
+    }
+    console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.value}`);
+    if (node.left !== null) {
+      prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
+    }
+  }
+
 let tree = new Tree([2,4,6,7,4,5,9,10,3]);
-console.log(tree);
+prettyPrint(tree.root);
+
+tree.delete(4);
+prettyPrint(tree.root);
+tree.delete(2);
+prettyPrint(tree.root);
+tree.delete(3);
+prettyPrint(tree.root);
