@@ -126,6 +126,38 @@ class Tree{
         return current;
     }
 
+    levelOrder(fn){
+        if(!this.root.value) return null;
+        if(!fn){
+            let arr = [this.root];
+            let currentId = 0;
+            let current = arr[currentId];
+            while(current.left || current.right){
+                if(current.left) arr.push(current.left);
+                if(current.right) arr.push(current.right);
+                currentId ++;
+                if(currentId > arr.length - 1) break;
+                current = arr[currentId];
+            }
+            return arr;
+        }
+
+        let arr = [this.root];
+        let currentId = 0;
+        let current = arr[currentId];
+        while(true){
+            fn(current);
+            if(current.left) arr.push(current.left);
+            if(current.right) arr.push(current.right);
+            currentId ++;
+            if(currentId > arr.length - 1) break;
+            current = arr[currentId];
+        }
+        return null;
+        
+    }
+
+
 
 
 
@@ -148,8 +180,5 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 
 let tree = new Tree([2,4,6,7,4,5,9,10,3]);
 prettyPrint(tree.root);
-
-console.log(tree.find(2));
-console.log(tree.find(10));
-console.log(tree.find(9));
-console.log(tree.find(11));
+tree.levelOrder(node => node.value = node.value * 2);
+prettyPrint(tree.root);
