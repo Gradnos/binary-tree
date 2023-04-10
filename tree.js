@@ -111,7 +111,20 @@ class Tree{
         return null;
     }
 
-
+    find(value){
+        if(!this.root.value) return null;
+        let current = this.root;
+        while(current.value !== value){
+            if(value > current.value){
+                if(!current.right) return null;
+                current = current.right;
+            } if(value < current.value){
+                if(!current.left) return null;
+                current = current.left;
+            }
+        }
+        return current;
+    }
 
 
 
@@ -136,9 +149,7 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 let tree = new Tree([2,4,6,7,4,5,9,10,3]);
 prettyPrint(tree.root);
 
-tree.delete(4);
-prettyPrint(tree.root);
-tree.delete(2);
-prettyPrint(tree.root);
-tree.delete(3);
-prettyPrint(tree.root);
+console.log(tree.find(2));
+console.log(tree.find(10));
+console.log(tree.find(9));
+console.log(tree.find(11));
